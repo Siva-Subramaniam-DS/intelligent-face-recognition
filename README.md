@@ -1,4 +1,29 @@
-# Intelligent Face Recognition System: Full Project Breakdown
+# Intelligent Face Recognition System: Full Project 
+
+---
+
+## 📚 Table of Contents
+
+1. [📁 Project Structure Overview](#1-project-structure-overview)
+2. [📄 File-by-File Explanation](#2-file-by-file-explanation)
+
+   * [A. Main Application Entrypoint](#a-main-application-entrypoint)
+   * [B. Application Factory and Routing](#b-application-factory-and-routing)
+   * [C. Deep Learning Model](#c-deep-learning-model)
+   * [D. Face Detection, Recognition, and Database](#d-face-detection-recognition-and-database)
+   * [E. Statistics and Logging](#e-statistics-and-logging)
+   * [F. Data Organization and Augmentation](#f-data-organization-and-augmentation)
+   * [G. Configuration](#g-configuration)
+   * [H. Web Frontend (Templates and Static Files)](#h-web-frontend-templates-and-static-files)
+   * [I. Data and Models](#i-data-and-models)
+   * [J. Requirements and Documentation](#j-requirements-and-documentation)
+3. [🔧 How Everything Works Together](#3-how-everything-works-together)
+4. [💡 Why Each Technology Was Used](#4-why-each-technology-was-used)
+5. [🚀 Extending the System](#5-extending-the-system)
+6. [📝 License](#6-license)
+7. [👨‍💻 Author](#7-author)
+
+---
 
 ## 1. **Project Structure Overview**
 
