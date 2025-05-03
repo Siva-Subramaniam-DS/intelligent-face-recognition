@@ -1,0 +1,29 @@
+face_recognition_system/
+├── app/
+│   ├── __init__.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── siamese_network.py
+│   │   └── face_detector.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── preprocessing.py
+│   │   ├── face_utils.py
+│   │   └── database.py
+│   ├── static/
+│   │   ├── css/
+│   │   ├── js/
+│   │   └── images/
+│   ├── templates/
+│   │   ├── base.html
+│   │   ├── index.html
+│   │   ├── register.html
+│   │   └── results.html
+│   └── routes.py
+├── data/
+│   ├── raw/
+│   └── processed/
+├── config.py
+├── requirements.txt
+├── train.py
+└── run.py 
