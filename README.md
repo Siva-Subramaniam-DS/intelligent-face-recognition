@@ -239,6 +239,20 @@ intelligent-face-recognition/
 
 ---
 
+## Sample Image Output
+
+![Registered](https://github.com/user-attachments/assets/d4e8dbbb-7437-4d87-b8ce-a84fa7eabfa7)
+---
+![Already Registered](https://github.com/user-attachments/assets/4a73d281-c435-46a3-a2fc-6c5c34e425a1)
+---
+![Face  detecting](https://github.com/user-attachments/assets/9276bd1d-0a1d-46fd-a219-d5eec18ac295)
+---
+![Static Image](https://github.com/user-attachments/assets/76ef53f2-e8c0-475f-bd53-2d1f4b38d8ce)
+---
+![Layout](https://github.com/user-attachments/assets/ba181e1d-ea75-46b8-b90f-5634da4dbe69)
+---
+
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
