@@ -73,6 +73,10 @@ class FaceDatabase:
     
     def add_new_face(self, image, person_name):
         """Add a new face to the database"""
+        # Check if person already exists
+        if person_name in self.known_faces:
+            return False, "Person already registered"
+            
         face_locations = face_recognition.face_locations(image)
         if face_locations:
             face_encoding = face_recognition.face_encodings(image, face_locations)[0]
@@ -91,5 +95,5 @@ class FaceDatabase:
                 self.known_faces[person_name] = []
             self.known_faces[person_name].append(face_encoding)
             
-            return True
-        return False 
+            return True, "Face registered successfully"
+        return False, "No face detected in the image" 

@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from app.utils.face_utils import FaceDetector, FaceDatabase
 from app.models.siamese_network import SiameseNetwork
+from app.utils.statistics import RecognitionStatistics
 import os
 from werkzeug.utils import secure_filename
 import face_recognition
@@ -13,6 +14,7 @@ main = Blueprint('main', __name__)
 face_detector = FaceDetector()
 face_db = FaceDatabase('organized_faces_dataset')
 siamese_net = SiameseNetwork()
+stats_handler = RecognitionStatistics()
 
 # Load the trained model if it exists
 if os.path.exists('models/siamese_model.h5'):
@@ -44,12 +46,9 @@ def register():
             
             # Process the image
             image = cv2.imread(file_path)
-            success = face_db.add_new_face(image, person_name)
+            success, message = face_db.add_new_face(image, person_name)
             
-            if success:
-                return jsonify({'message': 'Face registered successfully'})
-            else:
-                return jsonify({'error': 'No face detected in the image'})
+            return jsonify({'success': success, 'message': message})
     
     return render_template('register.html')
 
@@ -58,35 +57,77 @@ def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def gen_frames():
-    camera = cv2.VideoCapture(0)
-    while True:
-        success, frame = camera.read()
-        if not success:
-            break
-        else:
-            # Detect faces
-            faces = face_detector.detect_faces(frame)
+    try:
+        camera = cv2.VideoCapture(0)
+        if not camera.isOpened():
+            print("Error: Could not open camera")
+            return
+        
+        while True:
+            success, frame = camera.read()
+            if not success:
+                print("Error: Could not read frame from camera")
+                break
             
-            # Process each face
-            for face in faces:
-                x, y, w, h = face['box']
-                face_img = face_detector.extract_face(frame, face['box'])
+            try:
+                # Convert frame to RGB for face detection
+                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 
-                # Get face encoding
-                face_encoding = face_recognition.face_encodings(face_img)[0]
+                # Detect faces
+                faces = face_detector.detect_faces(rgb_frame)
                 
-                # Recognize face
-                name, confidence = face_db.recognize_face(face_encoding)
+                if faces:
+                    # Process each face
+                    for face in faces:
+                        x, y, w, h = face['box']
+                        face_img = face_detector.extract_face(rgb_frame, face['box'])
+                        
+                        try:
+                            # Get face encoding
+                            face_encodings = face_recognition.face_encodings(face_img)
+                            if face_encodings:
+                                face_encoding = face_encodings[0]
+                                
+                                # Recognize face
+                                name, confidence = face_db.recognize_face(face_encoding)
+                                
+                                # Log the recognition
+                                status = 'success' if name != 'Unknown' else 'failed'
+                                stats_handler.add_log(name, confidence, status)
+                                
+                                # Draw rectangle and label
+                                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                                cv2.putText(frame, f"{name} ({confidence:.2f})", (x, y-10),
+                                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                            else:
+                                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
+                                cv2.putText(frame, "No face encoding", (x, y-10),
+                                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                        except Exception as e:
+                            print(f"Error in face recognition: {str(e)}")
+                            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
+                            cv2.putText(frame, "Recognition Error", (x, y-10),
+                                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
                 
-                # Draw rectangle and label
-                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-                cv2.putText(frame, f"{name} ({confidence:.2f})", (x, y-10),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-            
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                ret, buffer = cv2.imencode('.jpg', frame)
+                frame = buffer.tobytes()
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                
+            except Exception as e:
+                print(f"Error processing frame: {str(e)}")
+                continue
+                
+    except Exception as e:
+        print(f"Camera error: {str(e)}")
+    finally:
+        if 'camera' in locals():
+            camera.release()
+
+@main.route('/statistics')
+def statistics():
+    stats = stats_handler.get_statistics()
+    return render_template('statistics.html', **stats)
 
 @main.route('/upload', methods=['POST'])
 def upload_image():

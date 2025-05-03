@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Statistics - Face Recognition System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Statistics Cards -->
+        <div class="col-md-4">
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Overall Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-item mb-3">
+                        <h6>Total Registered Faces</h6>
+                        <p class="stat-value">{{ total_faces }}</p>
+                    </div>
+                    <div class="stat-item mb-3">
+                        <h6>Total Recognition Attempts</h6>
+                        <p class="stat-value">{{ total_attempts }}</p>
+                    </div>
+                    <div class="stat-item mb-3">
+                        <h6>Successful Recognitions</h6>
+                        <p class="stat-value">{{ successful_recognitions }}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h6>Recognition Accuracy</h6>
+                        <p class="stat-value">{{ accuracy }}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recognition Logs -->
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Recognition Logs</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Person</th>
+                                    <th>Confidence</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in recognition_logs %}
+                                <tr>
+                                    <td>{{ log.timestamp }}</td>
+                                    <td>{{ log.person }}</td>
+                                    <td>{{ "%.2f"|format(log.confidence) }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if log.status == 'success' else 'danger' }}">
+                                            {{ log.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+    
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+    
+    .stat-item {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0d6efd;
+        margin: 0;
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    .table th {
+        background-color: #f8f9fa;
+        border-top: none;
+    }
+    
+    .badge {
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+</style>
+{% endblock %} 
