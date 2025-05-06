@@ -70,14 +70,39 @@ class RecognitionStatistics:
         with open(self.log_file, 'w') as f:
             json.dump(self.logs, f, indent=2)
     
-    def get_statistics(self):
-        """Get current statistics"""
+    def get_statistics(self, page=1, per_page=20):
+        """
+        Get current statistics with paginated logs
+        
+        Args:
+            page (int): The page number (1-indexed)
+            per_page (int): Number of logs per page
+        """
+        # Reverse logs to get latest first
+        reversed_logs = list(reversed(self.logs))
+        
+        # Calculate indices for pagination
+        start_idx = (page - 1) * per_page
+        end_idx = start_idx + per_page
+        
+        # Get paginated logs
+        paginated_logs = reversed_logs[start_idx:end_idx]
+        
+        # Calculate total pages
+        total_pages = (len(self.logs) + per_page - 1) // per_page
+        
         return {
             'total_faces': len(self.stats['person_stats']),
             'total_attempts': self.stats['total_attempts'],
             'successful_recognitions': self.stats['successful_recognitions'],
             'accuracy': round((self.stats['successful_recognitions'] / self.stats['total_attempts'] * 100) if self.stats['total_attempts'] > 0 else 0, 2),
-            'recognition_logs': self.logs[-50:]  # Return last 50 logs
+            'recognition_logs': paginated_logs,
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': total_pages,
+                'total_logs': len(self.logs)
+            }
         }
     
     def get_person_statistics(self, person_name):

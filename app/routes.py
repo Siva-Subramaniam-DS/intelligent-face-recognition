@@ -126,7 +126,9 @@ def gen_frames():
 
 @main.route('/statistics')
 def statistics():
-    stats = stats_handler.get_statistics()
+    page = request.args.get('page', 1, type=int)
+    per_page = 20  # Fixed at 20 rows per page as requested
+    stats = stats_handler.get_statistics(page=page, per_page=per_page)
     return render_template('statistics.html', **stats)
 
 @main.route('/upload', methods=['POST'])

@@ -3,38 +3,113 @@
 {% block title %}Register - Face Recognition System{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid py-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header text-white" style="background: var(--primary-gradient);">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Register New Face</h5>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="cameraToggle" checked>
-                            <label class="form-check-label" for="cameraToggle">Camera</label>
+                        <h5 class="card-title text-white mb-0"><i class="fas fa-user-plus me-2"></i>Register New Face</h5>
+                        <div class="camera-controls">
+                            <button id="cameraOnBtn" class="btn btn-success btn-sm me-2">
+                                <i class="fas fa-video me-1"></i> On
+                            </button>
+                            <button id="cameraOffBtn" class="btn btn-danger btn-sm">
+                                <i class="fas fa-video-slash me-1"></i> Off
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <div class="text-center mb-4">
+                            <div class="video-preview">
+                                <img id="videoFeed" src="{{ url_for('main.video_feed') }}" class="img-fluid rounded" alt="Live Feed">
+                                <div class="camera-status">
+                                    <span id="statusIndicator" class="badge bg-success">Camera Active</span>
+                                </div>
+                                <div class="camera-capture-controls">
+                                    <button id="captureBtn" class="btn btn-lg btn-primary rounded-circle">
+                                        <i class="fas fa-camera"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <form id="registerForm" method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="mb-4">
+                            <label for="name" class="form-label fw-bold"><i class="fas fa-id-card me-2"></i>Name</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name" required>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="image" class="form-label">Face Image</label>
-                            <input type="file" class="form-control" id="image" name="file" accept="image/*" required>
-                            <div class="form-text">Please upload a clear image of the face.</div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold"><i class="fas fa-image me-2"></i>Face Image</label>
+                            <div class="face-image-options mb-3">
+                                <div class="btn-group w-100" role="group">
+                                    <input type="radio" class="btn-check" name="imageSource" id="cameraSource" checked>
+                                    <label class="btn btn-outline-primary" for="cameraSource">
+                                        <i class="fas fa-camera me-1"></i> Use Camera
+                                    </label>
+                                    
+                                    <input type="radio" class="btn-check" name="imageSource" id="uploadSource">
+                                    <label class="btn btn-outline-primary" for="uploadSource">
+                                        <i class="fas fa-upload me-1"></i> Upload Image
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div id="uploadControls" style="display: none;">
+                                <input type="file" class="form-control" id="image" name="file" accept="image/*">
+                                <div class="form-text mt-2">
+                                    <i class="fas fa-info-circle me-1"></i> Please upload a clear, well-lit image of the face.
+                                </div>
+                            </div>
+                            
+                            <div id="capturedImageContainer" style="display: none;">
+                                <input type="hidden" id="capturedImage" name="capturedImage">
+                            </div>
                         </div>
                         
-                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                        <div class="image-preview-container mb-4 text-center" style="display: none;">
+                            <h6 class="mb-3">Image Preview</h6>
+                            <div id="imagePreview" class="rounded"></div>
+                        </div>
+                        
+                        <button type="submit" class="btn text-white w-100" style="background: var(--primary-gradient);">
+                            <i class="fas fa-save me-2"></i>Register Face
+                        </button>
                     </form>
                     
-                    <div id="messageContainer" class="mt-3" style="display: none;">
+                    <div id="messageContainer" class="mt-4" style="display: none;">
                         <div class="alert" role="alert"></div>
                     </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-lg mt-4">
+                <div class="card-header text-white" style="background: var(--secondary-gradient);">
+                    <h5 class="card-title text-white mb-0"><i class="fas fa-info-circle me-2"></i>Registration Tips</h5>
+                </div>
+                <div class="card-body p-4">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <div>Use a well-lit environment for best recognition results</div>
+                        </li>
+                        <li class="list-group-item d-flex">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <div>Make sure the face is clearly visible and centered in the frame</div>
+                        </li>
+                        <li class="list-group-item d-flex">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <div>Avoid extreme angles or partial facial coverage</div>
+                        </li>
+                        <li class="list-group-item d-flex">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <div>For best results, register multiple images of the same person</div>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -42,59 +117,328 @@
 </div>
 
 <style>
+    body {
+        background-color: #f8f9fa;
+    }
+    
     .card {
         border: none;
         border-radius: 15px;
         margin-bottom: 20px;
-    }
-    
-    .card-header {
-        border-radius: 15px 15px 0 0 !important;
-    }
-    
-    .form-check-input:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-    
-    .btn-primary {
-        background-color: #0d6efd;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
+        overflow: hidden;
         transition: all 0.3s ease;
     }
     
-    .btn-primary:hover {
-        background-color: #0b5ed7;
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06) !important;
+    }
+    
+    .card-header {
+        border-bottom: none;
+        padding: 1.2rem 1.5rem;
+        font-weight: 600;
+    }
+    
+    .video-preview {
+        position: relative;
+        height: 300px;
+        background-color: #202020;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .video-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .camera-status {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 10;
+    }
+    
+    .camera-capture-controls {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+    }
+    
+    #captureBtn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    #captureBtn:hover {
+        transform: scale(1.1);
+    }
+    
+    #captureBtn:active {
+        transform: scale(0.95);
+    }
+    
+    .camera-controls .btn {
+        border-radius: 50px;
+        padding: 6px 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .camera-controls .btn:hover {
         transform: translateY(-2px);
     }
     
+    .form-check-input {
+        width: 40px;
+        height: 20px;
+        cursor: pointer;
+    }
+    
+    .form-check-input:checked {
+        background-color: #38ef7d;
+        border-color: #38ef7d;
+    }
+    
+    .btn {
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
     .form-control {
-        border-radius: 8px;
-        padding: 10px;
+        border-radius: 10px;
+        padding: 12px 15px;
         border: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
     }
     
     .form-control:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.25);
+        background-color: #fff;
+    }
+    
+    .form-text {
+        color: #6c757d;
+    }
+    
+    .badge {
+        padding: 0.5rem 0.8rem;
+        font-weight: 500;
+        border-radius: 8px;
+    }
+    
+    .image-preview-container {
+        max-height: 300px;
+        overflow: hidden;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border: 1px dashed #dee2e6;
+    }
+    
+    #imagePreview img {
+        max-height: 200px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .list-group-item {
+        padding: 1rem 0.5rem;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+    
+    .face-image-options .btn-group {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .face-image-options .btn {
+        padding: 12px;
+        font-weight: 500;
+    }
+    
+    .btn-check:checked + .btn-outline-primary {
+        background: var(--primary-gradient);
+        border-color: transparent;
+    }
+    
+    .alert-success {
+        background: var(--secondary-gradient);
+        color: white;
+        border: none;
+    }
+    
+    .alert-danger {
+        background: linear-gradient(135deg, #ff6b6b, #f53844);
+        color: white;
+        border: none;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    #captureBtn {
+        animation: pulse 2s infinite;
+    }
+    
+    .camera-flash {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        opacity: 0;
+        z-index: 9999;
+        pointer-events: none;
+    }
+    
+    @keyframes flash {
+        0% { opacity: 0; }
+        50% { opacity: 0.8; }
+        100% { opacity: 0; }
     }
 </style>
 
+<div class="camera-flash" id="cameraFlash"></div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const cameraToggle = document.getElementById('cameraToggle');
+        // Elements
+        const cameraOnBtn = document.getElementById('cameraOnBtn');
+        const cameraOffBtn = document.getElementById('cameraOffBtn');
+        const captureBtn = document.getElementById('captureBtn');
         const videoFeed = document.getElementById('videoFeed');
+        const statusIndicator = document.getElementById('statusIndicator');
         const registerForm = document.getElementById('registerForm');
         const messageContainer = document.getElementById('messageContainer');
         const alertDiv = messageContainer.querySelector('.alert');
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.getElementById('imagePreview');
+        const imagePreviewContainer = document.querySelector('.image-preview-container');
+        const cameraSource = document.getElementById('cameraSource');
+        const uploadSource = document.getElementById('uploadSource');
+        const uploadControls = document.getElementById('uploadControls');
+        const capturedImageContainer = document.getElementById('capturedImageContainer');
+        const capturedImageInput = document.getElementById('capturedImage');
+        const cameraFlash = document.getElementById('cameraFlash');
         
-        cameraToggle.addEventListener('change', function() {
+        let isCameraOn = true;
+        
+        // Camera control functions
+        function turnCameraOn() {
+            videoFeed.src = "{{ url_for('main.video_feed') }}";
+            statusIndicator.className = 'badge bg-success';
+            statusIndicator.textContent = 'Camera Active';
+            captureBtn.style.display = 'flex';
+            isCameraOn = true;
+        }
+        
+        function turnCameraOff() {
+            videoFeed.src = "";
+            statusIndicator.className = 'badge bg-danger';
+            statusIndicator.textContent = 'Camera Off';
+            captureBtn.style.display = 'none';
+            isCameraOn = false;
+        }
+        
+        // Capture photo from video feed
+        function capturePhoto() {
+            if (!isCameraOn) return;
+            
+            // Create flash effect
+            cameraFlash.style.animation = 'flash 0.5s';
+            setTimeout(() => {
+                cameraFlash.style.animation = '';
+            }, 500);
+            
+            // Create canvas to capture image from video
+            const canvas = document.createElement('canvas');
+            canvas.width = videoFeed.width;
+            canvas.height = videoFeed.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to data URL
+            const dataURL = canvas.toDataURL('image/jpeg');
+            
+            // Display captured image in preview
+            imagePreview.innerHTML = `<img src="${dataURL}" class="img-fluid" alt="Captured Image">`;
+            imagePreviewContainer.style.display = 'block';
+            
+            // Store image data to form
+            capturedImageInput.value = dataURL;
+            
+            // Show success message
+            messageContainer.style.display = 'block';
+            alertDiv.className = 'alert alert-success';
+            alertDiv.textContent = 'Image captured successfully! You can now complete registration.';
+        }
+        
+        // Event listeners
+        cameraOnBtn.addEventListener('click', turnCameraOn);
+        cameraOffBtn.addEventListener('click', turnCameraOff);
+        captureBtn.addEventListener('click', capturePhoto);
+        
+        // Toggle between camera and upload
+        cameraSource.addEventListener('change', function() {
             if (this.checked) {
-                videoFeed.src = "{{ url_for('main.video_feed') }}";
-            } else {
-                videoFeed.src = "";
+                uploadControls.style.display = 'none';
+                capturedImageContainer.style.display = 'block';
+                if (isCameraOn) {
+                    captureBtn.style.display = 'flex';
+                }
+            }
+        });
+        
+        uploadSource.addEventListener('change', function() {
+            if (this.checked) {
+                uploadControls.style.display = 'block';
+                capturedImageContainer.style.display = 'none';
+                captureBtn.style.display = 'none';
+            }
+        });
+        
+        // Preview uploaded image
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" class="img-fluid" alt="Selected Image">`;
+                    imagePreviewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             }
         });
         
@@ -102,6 +446,27 @@
             e.preventDefault();
             
             const formData = new FormData(this);
+            
+            // Validate that we have an image
+            if (uploadSource.checked && !imageInput.files[0] && !capturedImageInput.value) {
+                messageContainer.style.display = 'block';
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.textContent = 'Please upload or capture an image first.';
+                return;
+            }
+            
+            if (cameraSource.checked && !capturedImageInput.value) {
+                messageContainer.style.display = 'block';
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.textContent = 'Please capture an image from the camera first.';
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Processing...';
+            submitBtn.disabled = true;
             
             fetch("{{ url_for('main.register') }}", {
                 method: 'POST',
@@ -115,16 +480,32 @@
                 if (data.success) {
                     alertDiv.className = 'alert alert-success';
                     registerForm.reset();
+                    imagePreviewContainer.style.display = 'none';
+                    capturedImageInput.value = '';
                 } else {
                     alertDiv.className = 'alert alert-danger';
                 }
+                
+                // Reset button
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+                
+                // Scroll to message
+                messageContainer.scrollIntoView({ behavior: 'smooth' });
             })
             .catch(error => {
                 messageContainer.style.display = 'block';
                 alertDiv.className = 'alert alert-danger';
                 alertDiv.textContent = 'An error occurred while processing your request.';
+                
+                // Reset button
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
             });
         });
+        
+        // Initialize camera
+        turnCameraOn();
     });
 </script>
-{% endblock %} 
+{% endblock %}
